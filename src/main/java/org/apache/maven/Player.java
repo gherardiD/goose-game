@@ -20,8 +20,15 @@ public class Player {
       // Use out.println() to send messages to the server
 
       // Example:
-      String serverMessage = in.readLine();
-      System.out.println("Server says: " + serverMessage);
+      out.println("MOVE 3");
+
+      // Receive updates from the server
+      String serverMessage;
+      while ((serverMessage = in.readLine()) != null) {
+        System.out.println("Server says: " + serverMessage);
+
+        // Process the received game state update
+      }
 
       // Close resources when done
       in.close();

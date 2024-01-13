@@ -24,12 +24,19 @@ public class ClientHandler implements Runnable {
   @Override
   public void run() {
     try {
-      // Implement server-side logic here
-      // Read messages from the client using in.readLine()
-      // Send messages to the client using out.println()
+      // Handle player actions and update game state
+      String clientMessage;
+      while ((clientMessage = in.readLine()) != null) {
+        System.out.println("Received from client: " + clientMessage);
 
-      // Example:
-      out.println("Welcome to the Goose Game!");
+        // Process player action and update game state
+        // For simplicity, let's assume the client sends a command like "MOVE 3" to move
+        // forward 3 spaces.
+        // You'll need to implement your game logic here.
+
+        // Broadcast the updated game state to all clients
+        GooseGameServer.broadcast("GameStateUpdate: " + "updatedGameState"); // Replace with your game state
+      }
 
       // Close resources when done
       in.close();
@@ -39,4 +46,10 @@ public class ClientHandler implements Runnable {
       e.printStackTrace();
     }
   }
+
+  // Send a message to the client
+  public void sendMessage(String message) {
+    out.println(message);
+  }
+
 }
