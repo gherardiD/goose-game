@@ -15,19 +15,28 @@ public class Player {
       BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
       PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 
-      // Implement client-side logic (handle user input, display game state, etc.)
-      // Use in.readLine() to receive messages from the server
-      // Use out.println() to send messages to the server
+      // * Create a separate instance of ServerListenerThread
+      ServerListenerThread serverListenerThread = new ServerListenerThread(socket);
+      serverListenerThread.start();
 
-      // Example:
-      out.println("MOVE 3");
+      // * Main thread handles user input
+      BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
+      String userInput;
+      while (true) {
 
-      // Receive updates from the server
-      String serverMessage;
-      while ((serverMessage = in.readLine()) != null) {
-        System.out.println("Server says: " + serverMessage);
+        // Read user input from the console
+        userInput = stdin.readLine();
 
-        // Process the received game state update
+        // Exit if user types "stop"
+        if (userInput.equals("stop")) {
+          break;
+        }
+
+        // Send a message to the server
+        out.println(userInput);
+
+        // TODO: Process the received game state update
+
       }
 
       // Close resources when done
