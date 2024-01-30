@@ -1,14 +1,44 @@
 package org.apache.maven;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+// import java.util.stream.IntStream;
 
 public class GooseGame {
   private Map<String, Integer> playerPositions; // Map to store player positions
-
+  private Cell[] cells; // Array to store all cells
+  
+  // * Constructor
   public GooseGame() {
     playerPositions = new HashMap<>();
+    createCells();
   }
+
+  // * Methods
+  // Set the cells of the game
+  private void createCells(){
+    int [] forwardCellsNumber = new int[]{12,25,36,85,28,96,47};
+    this.cells = new Cell[63];
+    for(int i = 0; i < 63; i++){
+      if (Arrays.asList(forwardCellsNumber).contains(i)){
+        this.cells[i] = new Forward(i);
+      } else if (i == 6){
+        this.cells[i] = new Bridge(i);
+      } else if (i == 19){
+        this.cells[i] = new TavernOfLostTime(i);
+      } else if (i == 42){
+        this.cells[i] = new Maze(i);
+      } else if (i == 52){
+        this.cells[i] = new Prison(i);
+      } else if (i == 58){
+        this.cells[i] = new Death(i);
+      } else {
+        this.cells[i] = new NormalCell(i);
+      }
+    }
+  }
+  
 
   // Add a player to the game
   public void addPlayer(String playerName) {

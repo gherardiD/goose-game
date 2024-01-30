@@ -7,10 +7,6 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 public class ClientHandler implements Runnable {
-  //
-  public static int count = 0;
-  private int id;
-  //
   private Socket clientSocket;
   private BufferedReader in;
   private PrintWriter out;
@@ -18,8 +14,6 @@ public class ClientHandler implements Runnable {
   private Boolean isRegistered;
 
   public ClientHandler(Socket socket, GooseGame gooseGame) {
-    this.id = count;
-    count++;
     this.clientSocket = socket;
     this.gooseGame = gooseGame;
     this.isRegistered = false;
@@ -34,19 +28,19 @@ public class ClientHandler implements Runnable {
   @Override
   public void run() {
     try {
-      String clientMessage;
+      String clientMessage = in.readLine();
+      // Register player
+      if (!isRegistered) {
+        registerPlayer(clientMessage);
+      }
+      
       while ((clientMessage = in.readLine()) != null) {
-        // Register player
-        if (!isRegistered) {
-          registerPlayer(clientMessage);
-        }
-        System.out.println("Received from client: " + clientMessage);
+        System.out.println("client:" + clientMessage);
+        
 
         // TODO: Process player action and update game state using gooseGame instance
 
-        String players = gooseGame.getPlayersName();
-        // Broadcast the updated game state to all clients
-        GooseGameServer.broadcast("players: " + players); // Replace with your game state
+        
       }
 
       // Close resources when done
@@ -67,6 +61,8 @@ public class ClientHandler implements Runnable {
   private void registerPlayer(String name) {
     gooseGame.addPlayer(name);
     this.isRegistered = true;
+    String players = gooseGame.getPlayersName();
+    GooseGameServer.broadcast("players: " + players); // Replace with your game state
   }
 
   // private void processPlayerAction(String clientMessage) {

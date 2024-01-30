@@ -22,13 +22,15 @@ public class Player {
       // * Main thread handles user input
       BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
       String userInput;
-      while (true) {
+      Boolean active = true;
+      while (active) {
 
         // Read user input from the console
         userInput = stdin.readLine();
 
         // Exit if user types "stop"
         if (userInput.equals("stop")) {
+          active = false;
           break;
         }
 
