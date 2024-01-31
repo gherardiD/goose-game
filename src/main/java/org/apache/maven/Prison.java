@@ -2,7 +2,6 @@ package org.apache.maven;
 
 // 52
 public class Prison extends Cell{
-  private int number;
 
   public Prison(int number) {
     super(number);
@@ -14,6 +13,6 @@ public class Prison extends Cell{
   }
 
   public int getNumber() {
-    return number;
+    return super.getNumber();
   }
 }

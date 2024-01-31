@@ -18,10 +18,12 @@ public class GooseGame {
   // * Methods
   // Set the cells of the game
   private void createCells(){
-    int [] forwardCellsNumber = new int[]{12,25,36,85,28,96,47};
-    this.cells = new Cell[63];
-    for(int i = 0; i < 63; i++){
+    int [] forwardCellsNumber = new int[]{5, 9, 14, 18, 23, 27, 32, 36, 41, 45, 50, 54, 59, 63};
+    this.cells = new Cell[64];
+    for(int i = 0; i < 64; i++){
       if (Arrays.asList(forwardCellsNumber).contains(i)){
+        // ! doesn't pass here
+        System.out.println("forward cell");
         this.cells[i] = new Forward(i);
       } else if (i == 6){
         this.cells[i] = new Bridge(i);
@@ -49,10 +51,13 @@ public class GooseGame {
   public void movePlayer(String playerName, int spaces) {
     if (playerPositions.containsKey(playerName)) {
       int currentPosition = playerPositions.get(playerName);
-      int newPosition = currentPosition + spaces;
+      int nextCell = currentPosition + spaces;
+      System.out.println("Player " + playerName + " is at position " + currentPosition);
+      System.out.println("dice " + spaces);
+      System.out.println("cell number " + cells[nextCell].getNumber());
 
-      // Add additional game logic/rules as needed
-      // For example, check if the player landed on a special space
+      int newPosition = cells[nextCell].action(spaces);
+      System.out.println("Player " + playerName + " is now at position " + newPosition);
 
       playerPositions.put(playerName, newPosition);
     } else {
@@ -60,6 +65,8 @@ public class GooseGame {
     }
   }
 
+
+  // * getters and setters
   // Get the current positions of all players
   public Map<String, Integer> getPlayerPositions() {
     return new HashMap<>(playerPositions);

@@ -12,11 +12,14 @@ public class ClientHandler implements Runnable {
   private PrintWriter out;
   private GooseGame gooseGame;
   private Boolean isRegistered;
+  private String playerName;
 
   public ClientHandler(Socket socket, GooseGame gooseGame) {
     this.clientSocket = socket;
     this.gooseGame = gooseGame;
     this.isRegistered = false;
+    this.playerName = "";
+
     try {
       this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
       this.out = new PrintWriter(socket.getOutputStream(), true);
@@ -32,14 +35,14 @@ public class ClientHandler implements Runnable {
       // Register player
       if (!isRegistered) {
         registerPlayer(clientMessage);
+        this.playerName = clientMessage;
       }
       
       while ((clientMessage = in.readLine()) != null) {
         System.out.println("client:" + clientMessage);
-        
 
         // TODO: Process player action and update game state using gooseGame instance
-
+        processPlayerAction();
         
       }
 
@@ -52,28 +55,26 @@ public class ClientHandler implements Runnable {
     }
   }
 
-  // Send a message to the client
-  public void sendMessage(String message) {
-    System.out.println("sending");
-    out.println(message);
+  // Process the player action
+  private void processPlayerAction() {
+    int dice1 = (int) (Math.random() * 6) + 1;
+    int dice2 = (int) (Math.random() * 6) + 1;
+    int spaces = dice1 + dice2;
+    gooseGame.movePlayer(this.playerName, spaces);
   }
 
+  
   private void registerPlayer(String name) {
     gooseGame.addPlayer(name);
     this.isRegistered = true;
     String players = gooseGame.getPlayersName();
     GooseGameServer.broadcast("players: " + players); // Replace with your game state
   }
-
-  // private void processPlayerAction(String clientMessage) {
-  // Parse the client message to determine the player action
-  // For simplicity, let's assume the client sends a command like "MOVE 3" to move
-  // forward 3 spaces.
-  // String[] tokens = clientMessage.split(" ");
-  // if (tokens.length == 2 && tokens[0].equals("MOVE")) {
-  // int spaces = Integer.parseInt(tokens[1]);
-  // gooseGame.movePlayer("playerName", spaces); // Replace with the player's name
-  // }
-  // }
+  
+  // Send a message to the client
+  public void sendMessage(String message) {
+    System.out.println("sending");
+    out.println(message);
+  }
 
 }
