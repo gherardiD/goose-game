@@ -14,16 +14,19 @@ public class GooseGame {
     playerPositions = new HashMap<>();
     createCells();
   }
-
+  // position
+  // 0 1 2 3 4 5 6 7 8 9 10 11 12 13
+  // cells
+  // 1 2 3 4  5 6 7 8 9 10 11 12 13 14
+  
   // * Methods
   // Set the cells of the game
   private void createCells(){
     int [] forwardCellsNumber = new int[]{5, 9, 14, 18, 23, 27, 32, 36, 41, 45, 50, 54, 59, 63};
-    this.cells = new Cell[64];
-    for(int i = 0; i < 64; i++){
-      if (Arrays.asList(forwardCellsNumber).contains(i)){
-        // ! doesn't pass here
-        System.out.println("forward cell");
+    this.cells = new Cell[65];
+    for(int i = 0; i < cells.length; i++){
+      final int currentIndex = i; // this is needed to use i in the lambda expression
+      if (Arrays.stream(forwardCellsNumber).anyMatch(x -> x == currentIndex)){
         this.cells[i] = new Forward(i);
       } else if (i == 6){
         this.cells[i] = new Bridge(i);
@@ -48,21 +51,53 @@ public class GooseGame {
   }
 
   // Move a player by a specified number of spaces
-  public void movePlayer(String playerName, int spaces) {
+  public boolean movePlayer(String playerName, int spaces) {
     if (playerPositions.containsKey(playerName)) {
+      GooseGameServer.broadcast("dice: " + spaces);
       int currentPosition = playerPositions.get(playerName);
+      int nextPosition;
       int nextCell = currentPosition + spaces;
-      System.out.println("Player " + playerName + " is at position " + currentPosition);
-      System.out.println("dice " + spaces);
-      System.out.println("cell number " + cells[nextCell].getNumber());
-
-      int newPosition = cells[nextCell].action(spaces);
-      System.out.println("Player " + playerName + " is now at position " + newPosition);
-
-      playerPositions.put(playerName, newPosition);
+      
+      nextCell = checkNextCell(nextCell);
+      
+      nextPosition = cells[nextCell].action(spaces);
+      
+      nextPosition = checkNextCell(nextPosition);
+      
+      if(checkWin(nextPosition)){
+        GooseGameServer.broadcast("Player " + playerName + " has won the game!");
+        return true;
+      }
+      
+      if (nextPosition < 0){
+        // * Player is in prison
+        GooseGameServer.broadcast("Player " + playerName + " is in prison for " + Math.abs(nextPosition) + " turns");
+        playerPositions.put(playerName, (nextCell));
+      } else {
+        // * Player is not in prison
+        GooseGameServer.broadcast("Player " + playerName + " is now at position " + nextPosition);
+        playerPositions.put(playerName, nextPosition);
+      }
+      
     } else {
       System.out.println("Player not found: " + playerName);
     }
+    return false;
+  }
+  
+  private int checkNextCell(int nextCell){;
+    if (nextCell > 64){
+      return (64 - (nextCell - 64));
+    } else {
+      return nextCell;
+    }
+  }
+  
+  private boolean checkWin(int position){
+    if(position == 64){
+      return true;
+    }else{
+      return false;}
   }
 
 

@@ -2,7 +2,6 @@ package org.apache.maven;
 
 // 6
 public class Bridge extends Cell {
-  private int number;
   private int destination;
 
   public Bridge(int number) {
@@ -15,7 +14,7 @@ public class Bridge extends Cell {
   }
 
   public int getNumber() {
-    return number;
+    return super.getNumber();
   }
   
 }

@@ -1,7 +1,6 @@
 package org.apache.maven;
 
 public class Death extends Cell{
-  private int number;
 
   public Death(int number) {
     super(number);
@@ -13,6 +12,6 @@ public class Death extends Cell{
   }
 
   public int getNumber() {
-    return number;
+    return super.getNumber();
   }
 }

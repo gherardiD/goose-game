@@ -2,7 +2,6 @@ package org.apache.maven;
 
 // 19
 public class TavernOfLostTime extends Cell{
-  private int number;
 
   public TavernOfLostTime(int number) {
     super(number);
@@ -14,6 +13,6 @@ public class TavernOfLostTime extends Cell{
   }
 
   public int getNumber() {
-    return number;
+    return super.getNumber();
   }
 }

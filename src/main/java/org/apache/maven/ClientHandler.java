@@ -38,11 +38,16 @@ public class ClientHandler implements Runnable {
         this.playerName = clientMessage;
       }
       
+      boolean win = false;
       while ((clientMessage = in.readLine()) != null) {
         System.out.println("client:" + clientMessage);
 
         // TODO: Process player action and update game state using gooseGame instance
-        processPlayerAction();
+        win = processPlayerAction();
+        
+        if(win){
+          break;
+        }
         
       }
 
@@ -56,11 +61,11 @@ public class ClientHandler implements Runnable {
   }
 
   // Process the player action
-  private void processPlayerAction() {
+  private boolean processPlayerAction() {
     int dice1 = (int) (Math.random() * 6) + 1;
     int dice2 = (int) (Math.random() * 6) + 1;
     int spaces = dice1 + dice2;
-    gooseGame.movePlayer(this.playerName, spaces);
+    return gooseGame.movePlayer(this.playerName, spaces);
   }
 
   
@@ -68,12 +73,11 @@ public class ClientHandler implements Runnable {
     gooseGame.addPlayer(name);
     this.isRegistered = true;
     String players = gooseGame.getPlayersName();
-    GooseGameServer.broadcast("players: " + players); // Replace with your game state
+    GooseGameServer.broadcast("players: " + players);
   }
   
   // Send a message to the client
   public void sendMessage(String message) {
-    System.out.println("sending");
     out.println(message);
   }
 
