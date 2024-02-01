@@ -12,13 +12,15 @@ public class GooseGameServer {
   // * Instance of goose game in common with all players
   private static GooseGame gooseGame = new GooseGame();
 
+  // Start the server
   public void start() {
     try {
       ServerSocket serverSocket = new ServerSocket(12345); // Use any available port
+      Socket clientSocket;
       System.out.println("Server is running and waiting for connections...");
-
+      
       while (true) {
-        Socket clientSocket = serverSocket.accept();
+        clientSocket = serverSocket.accept();
         System.out.println("Client connected: " + clientSocket.getInetAddress());
 
         // Handle client connection in a separate thread
@@ -26,7 +28,6 @@ public class GooseGameServer {
         clients.add(clientHandler);
         clientHandler.sendMessage("Welcome to the Goose Game! Please enter your name:");
         new Thread(clientHandler).start();
-
       }
     } catch (IOException e) {
       e.printStackTrace();
@@ -38,5 +39,19 @@ public class GooseGameServer {
     for (ClientHandler client : clients) {
       client.sendMessage(message);
     }
+  }
+
+  // send a message to a specific client
+  public static void sendTo(String playerName, String message) {
+    for (ClientHandler client : clients) {
+      if (client.getPlayerName().equals(playerName)) {
+        client.sendMessage(message);
+      }
+    }
+  }
+
+  // get number of connected clients
+  public static int getNumberOfClients() {
+    return clients.size();
   }
 }

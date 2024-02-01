@@ -8,16 +8,13 @@ import java.util.Map;
 public class GooseGame {
   private Map<String, Integer> playerPositions; // Map to store player positions
   private Cell[] cells; // Array to store all cells
+  private int playerTurn = 0;
   
   // * Constructor
   public GooseGame() {
     playerPositions = new HashMap<>();
     createCells();
   }
-  // position
-  // 0 1 2 3 4 5 6 7 8 9 10 11 12 13
-  // cells
-  // 1 2 3 4  5 6 7 8 9 10 11 12 13 14
   
   // * Methods
   // Set the cells of the game
@@ -48,6 +45,23 @@ public class GooseGame {
   // Add a player to the game
   public void addPlayer(String playerName) {
     playerPositions.put(playerName, 0); // Start player at position 0
+    int playerRegisteredNumber = playerPositions.size();
+    int numberOfPlayers = GooseGameServer.getNumberOfClients();
+    System.out.println("player registered " + playerRegisteredNumber);
+    System.out.println("total players " + numberOfPlayers);
+    if(playerRegisteredNumber == numberOfPlayers){
+      // All players are connected
+      startTurn();
+    }
+  }
+
+  private void startTurn(){
+    if(playerTurn == playerPositions.size()){
+      playerTurn = 0;
+    }
+    String playerName = (String) playerPositions.keySet().toArray()[playerTurn];
+    GooseGameServer.sendTo(playerName, "PlayerTurn");
+    playerTurn++;
   }
 
   // Move a player by a specified number of spaces

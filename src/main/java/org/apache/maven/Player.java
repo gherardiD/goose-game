@@ -7,6 +7,8 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 public class Player {
+  private static final Object lock = new Object();
+  private static boolean isPlayerTurn = false;
   public static void main(String[] args) {
     try {
       Socket socket = new Socket("localhost", 12345);
@@ -24,6 +26,16 @@ public class Player {
       String userInput;
       Boolean active = true;
       while (active) {
+        synchronized (lock) {
+          // Wait until it's the player's turn
+          while (!isPlayerTurn) {
+            try {
+              lock.wait();
+            } catch (InterruptedException e) {
+              e.printStackTrace();
+            }
+          }
+        }
 
         // Read user input from the console
         userInput = stdin.readLine();
@@ -37,7 +49,11 @@ public class Player {
         // Send a message to the server
         out.println(userInput);
 
-        // TODO: Process the received game state update
+        synchronized (lock) {
+          // Set it to the server's turn and notify the server
+          isPlayerTurn = false;
+          lock.notify();
+        }
 
       }
 
