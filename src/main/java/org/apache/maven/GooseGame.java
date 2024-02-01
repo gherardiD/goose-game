@@ -3,7 +3,6 @@ package org.apache.maven;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-// import java.util.stream.IntStream;
 
 public class GooseGame {
   private Map<String, Integer> playerPositions; // Map to store player positions
@@ -51,15 +50,16 @@ public class GooseGame {
     System.out.println("total players " + numberOfPlayers);
     if(playerRegisteredNumber == numberOfPlayers){
       // All players are connected
-      startTurn();
+      setPlayersTurn();
     }
   }
 
-  private void startTurn(){
+  private void setPlayersTurn(){
     if(playerTurn == playerPositions.size()){
       playerTurn = 0;
     }
     String playerName = (String) playerPositions.keySet().toArray()[playerTurn];
+    System.out.println("passo per GooseGame.setPlayersTurn and turn is " + playerTurn);
     GooseGameServer.sendTo(playerName, "PlayerTurn");
     playerTurn++;
   }
@@ -92,6 +92,9 @@ public class GooseGame {
         GooseGameServer.broadcast("Player " + playerName + " is now at position " + nextPosition);
         playerPositions.put(playerName, nextPosition);
       }
+      
+      // * Start next turn
+      setPlayersTurn();
       
     } else {
       System.out.println("Player not found: " + playerName);

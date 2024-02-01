@@ -34,8 +34,8 @@ public class ClientHandler implements Runnable {
       String clientMessage = in.readLine();
       // Register player
       if (!isRegistered) {
-        registerPlayer(clientMessage);
         this.playerName = clientMessage;
+        registerPlayer(clientMessage);
       }
       
       boolean win = false;
@@ -46,6 +46,7 @@ public class ClientHandler implements Runnable {
         win = processPlayerAction();
         
         if(win){
+          GooseGameServer.setGameFinished();
           break;
         }
         
@@ -72,8 +73,8 @@ public class ClientHandler implements Runnable {
   private void registerPlayer(String name) {
     gooseGame.addPlayer(name);
     this.isRegistered = true;
-    String players = gooseGame.getPlayersName();
-    GooseGameServer.broadcast("players: " + players);
+    // String players = gooseGame.getPlayersName();
+    // GooseGameServer.broadcast("players: " + players);
   }
   
   // Send a message to the client

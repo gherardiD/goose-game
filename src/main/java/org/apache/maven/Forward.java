@@ -8,6 +8,7 @@ public class Forward extends Cell{
   }
 
   public int action(int diceValue) {
+    GooseGameServer.broadcast("You landed on the Forward! Go forward " + diceValue + " cells");
     return (super.getNumber() + diceValue);
   }
 

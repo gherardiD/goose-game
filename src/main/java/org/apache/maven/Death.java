@@ -7,7 +7,7 @@ public class Death extends Cell{
   }
 
   public int action(int diceValue) {
-    // return to the start
+    GooseGameServer.broadcast("You landed on the Death! Go back to the start");
     return 0;
   }
 

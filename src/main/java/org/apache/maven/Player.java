@@ -7,52 +7,45 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 public class Player {
-  private static final Object lock = new Object();
-  private static boolean isPlayerTurn = false;
   public static void main(String[] args) {
     try {
       Socket socket = new Socket("localhost", 12345);
       System.out.println("Connected to the server.");
 
+      // input and output streams
       BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
       PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-
-      // * Create a separate instance of ServerListenerThread
-      ServerListenerThread serverListenerThread = new ServerListenerThread(socket);
-      serverListenerThread.start();
-
-      // * Main thread handles user input
       BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
+      
+      String serverMessage;
       String userInput;
-      Boolean active = true;
-      while (active) {
-        synchronized (lock) {
-          // Wait until it's the player's turn
-          while (!isPlayerTurn) {
-            try {
-              lock.wait();
-            } catch (InterruptedException e) {
-              e.printStackTrace();
-            }
-          }
-        }
-
-        // Read user input from the console
-        userInput = stdin.readLine();
-
-        // Exit if user types "stop"
-        if (userInput.equals("stop")) {
-          active = false;
+      Boolean registered = false;
+      Boolean inGame = true;
+      while (inGame) {
+        
+        // Wait for the server to send a message
+        serverMessage = in.readLine();
+        if(serverMessage == null){
+          inGame = false;
           break;
         }
-
-        // Send a message to the server
-        out.println(userInput);
-
-        synchronized (lock) {
-          // Set it to the server's turn and notify the server
-          isPlayerTurn = false;
-          lock.notify();
+        System.out.println(serverMessage);
+        
+        if(!registered || "PlayerTurn".equals(serverMessage)){
+          // Register player
+          registered = true;
+          
+          // Read user input from the console
+          userInput = stdin.readLine();
+          
+          // Exit if user types "stop"
+          if (userInput.equals("stop")) {
+            inGame = false;
+            break;
+          }
+          
+          // Send a message to the server
+          out.println(userInput);
         }
 
       }
