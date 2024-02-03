@@ -10,12 +10,12 @@ public class Bridge extends Cell {
   }
 
   public int action(int diceValue) {
-    GooseGameServer.broadcast("You landed on the Bridge! Go to cell " + this.destination);
+    GooseGame.broadcast("You landed on the Bridge! Go to cell " + this.destination);
     return this.destination;
   }
 
   public int getNumber() {
     return super.getNumber();
   }
-  
+
 }

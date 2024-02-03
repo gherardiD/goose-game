@@ -13,12 +13,16 @@ public class ClientHandler implements Runnable {
   private GooseGame gooseGame;
   private Boolean isRegistered;
   private String playerName;
+  private int inPrison;
+
+  // * CONSTRUCTOR
 
   public ClientHandler(Socket socket, GooseGame gooseGame) {
     this.clientSocket = socket;
     this.gooseGame = gooseGame;
     this.isRegistered = false;
     this.playerName = "";
+    this.inPrison = 0;
 
     try {
       this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -28,6 +32,7 @@ public class ClientHandler implements Runnable {
     }
   }
 
+  // * MAIN METHOD
   @Override
   public void run() {
     try {
@@ -37,19 +42,19 @@ public class ClientHandler implements Runnable {
         this.playerName = clientMessage;
         registerPlayer(clientMessage);
       }
-      
+
       boolean win = false;
       while ((clientMessage = in.readLine()) != null) {
         System.out.println("client:" + clientMessage);
 
         // TODO: Process player action and update game state using gooseGame instance
         win = processPlayerAction();
-        
-        if(win){
+
+        if (win) {
           GooseGameServer.setGameFinished();
           break;
         }
-        
+
       }
 
       // Close resources when done
@@ -61,6 +66,15 @@ public class ClientHandler implements Runnable {
     }
   }
 
+  // * GAME METHODS
+
+  private void registerPlayer(String name) {
+    gooseGame.addPlayer(name);
+    this.isRegistered = true;
+    // String players = gooseGame.getPlayersName();
+    // GooseGame.broadcast("players: " + players);
+  }
+
   // Process the player action
   private boolean processPlayerAction() {
     int dice1 = (int) (Math.random() * 6) + 1;
@@ -69,17 +83,23 @@ public class ClientHandler implements Runnable {
     return gooseGame.movePlayer(this.playerName, spaces);
   }
 
-  
-  private void registerPlayer(String name) {
-    gooseGame.addPlayer(name);
-    this.isRegistered = true;
-    // String players = gooseGame.getPlayersName();
-    // GooseGameServer.broadcast("players: " + players);
-  }
-  
   // Send a message to the client
   public void sendMessage(String message) {
     out.println(message);
+  }
+
+  public void decreasePrisonTurns() {
+    this.inPrison--;
+  }
+
+  // * GETTERS AND SETTERS
+
+  public void setPrisonTurns(int turns) {
+    this.inPrison = turns;
+  }
+
+  public int getPrisonTurns() {
+    return this.inPrison;
   }
 
   public String getPlayerName() {

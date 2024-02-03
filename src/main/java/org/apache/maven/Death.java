@@ -1,13 +1,13 @@
 package org.apache.maven;
 
-public class Death extends Cell{
+public class Death extends Cell {
 
   public Death(int number) {
     super(number);
   }
 
   public int action(int diceValue) {
-    GooseGameServer.broadcast("You landed on the Death! Go back to the start");
+    GooseGame.broadcast("You landed on the Death! Go back to the start");
     return 0;
   }
 
