@@ -122,7 +122,6 @@ public class GooseGame {
       }
 
       if (nextPosition < 0) {
-        // TODO: Player is in prison
         int prisonTurns = Math.abs(nextPosition);
         broadcast("Player " + playerName + " is in prison for " + prisonTurns + " turns");
         setPrisonTurns(playerName, prisonTurns);
