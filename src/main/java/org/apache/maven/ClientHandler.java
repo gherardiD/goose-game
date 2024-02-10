@@ -47,7 +47,6 @@ public class ClientHandler implements Runnable {
       while ((clientMessage = in.readLine()) != null) {
         System.out.println("client:" + clientMessage);
 
-        // TODO: Process player action and update game state using gooseGame instance
         win = processPlayerAction();
 
         if (win) {
